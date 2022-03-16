@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube App</title>
+    <style>
+        #search_results{
+            display: grid;
+            grid-template-columns: repeat(4,20%);
+            grid-gap: 5%;
+        }
+        
+    </style>
+  </head>
+  <body>
+    <h1>YouTube Search Engine</h1>
+    <input type="text" id="search" />
+    <button onclick="searchVideos()">Search</button>
+    <div id="search_results"></div>
+  </body>
+</html>
+<script>
+  // YouTube API : Reading Documentation AIzaSyAgvboBXJiYww21vAQlTKnHxTvWS9quneY
+  // YouTube API URL : https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=football&key=[YOUR_API_KEY]
+
+  const search_results_div = document.getElementById("search_results");
+
+  const searchVideos = async () => {
+    try {
+      let inp = document.getElementById("search").value;
+
+      let res = await fetch(
+        `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${inp}&key=AIzaSyAgvboBXJiYww21vAQlTKnHxTvWS9quneY&maxResults=16`
+      );
+
+      let data = await res.json();
+
+      let videos = data.items;
+      appendVideos(videos)
+      console.log(videos);
+
+      // console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  /*
+    Possible mistakes
+    async await not in pair
+    https:
+    res.json()
+    sperate params using and
+    wrong destination
+    spelling mistake
+     */
+
+  const appendVideos = (data) => {
+    search_results_div.innerHTML = null;
+    try {
+      data.forEach((el) => {
+        let div = document.createElement("div");
+
+        let title = document.createElement("p");
+        title.innerText = el.snippet.title;
+
+        let iframe = document.createElement("iframe");
+        iframe.src = `https://www.youtube.com/embed/${el.id.videoId}`;
+        iframe.width = "100%";
+        iframe.height = "75%";
+        iframe.allow = "fullscreen"
+
+        div.append(iframe,title);
+        search_results_div.append(div);
+
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  /*
+    embed - adding something
+    do want to add a video your app?
+    I want to embed my video
+    embed url - https://www.youtube.com/embed/13oic0m2y2E
+
+*/
+</script>
